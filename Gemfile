@@ -74,5 +74,6 @@ end
 
 group :development do
   gem 'pry-debugger'
-  gem 'debugger-linecache'
+  gem 'debugger-linecache'  
+  gem "rails-erd"
 end
