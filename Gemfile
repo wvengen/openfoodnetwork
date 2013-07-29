@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
 ruby "1.9.3"
 
-gem 'rails', '3.2.13'
+gem 'rails', '3.2.14'
 
 gem 'pg'
-gem 'spree', :git => 'git://github.com/spree/spree.git', :branch => '2-0-stable'
+gem 'spree', :git => 'git://github.com/spree/spree.git', :tag => 'v2.0.3'
 gem 'spree_i18n', :git => 'git://github.com/spree/spree_i18n.git', :branch => '2-0-stable'
 gem 'spree_paypal_express', :git => 'git://github.com/spree/spree_paypal_express.git', :branch => '2-0-stable'
 gem 'spree_last_address', :git => 'git://github.com/eaterprises/spree-last-address.git', :tag => 'spree-2.0'
