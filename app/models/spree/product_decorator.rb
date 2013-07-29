@@ -59,6 +59,8 @@ Spree::Product.class_eval do
                                                 where('order_cycles.id = ?', order_cycle) }
 
 
+
+
   # -- Methods
 
   def in_distributor?(distributor)
