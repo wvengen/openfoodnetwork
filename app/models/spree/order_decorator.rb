@@ -67,7 +67,10 @@ Spree::Order.class_eval do
   # checkout process, not just after the delivery step.
   # This is based on the assumption that there's only one shipping method visible to the user,
   # which is a method using the itemwise shipping calculator.
-  def set_default_shipping_method
+  def set_default_shipping_method    
+    # self.shipments.create(shipping_method: shipping_method) 
+    # if self.shipment
+    #   self.save!
     self.shipping_method = itemwise_shipping_method
     if self.shipping_method
       self.save!
