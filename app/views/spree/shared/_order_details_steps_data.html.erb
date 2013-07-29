@@ -10,7 +10,7 @@
     </div>
 
     <div class="columns alpha six">
-      <h6><%= t(:billing_address) %></h6>
+      <h6><%= Spree.t(:billing_address) %></h6>
       <div class="address">
         <%= render 'enterprises/distributor_details', :distributor => order.distributor %>
       </div>
@@ -22,7 +22,7 @@
 <div class="row steps-data">
   <% order.payments.each do |payment| %>
     <div class="columns alpha six" <% if payment.payment_method.name.include? "EFT" %>id="eft-payment-alert"<% end %>>
-      <h6><%= t(:payment_information) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:payment) unless @order.completed? %></h6>
+      <h6><%= Spree.t(:payment_information) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:payment) unless @order.completed? %></h6>
       <div class="payment-info">
         <% if payment.payment_method.name.include? "PayPal" %>
         <div class="flash notice">Your payment via PayPal has been processed successfully.</div>
@@ -31,7 +31,7 @@
         <% elsif order.credit_cards.empty? == false %>
           <span class="cc-type">
             <%= image_tag "credit_cards/icons/#{order.credit_cards.first.cc_type}.png" %>
-            <%= t(:ending_in)%> <%= order.credit_cards.first.last_digits %>
+            <%= Spree.t(:ending_in)%> <%= order.credit_cards.first.last_digits %>
           </span>
         <br />
           <span class="full-name">
