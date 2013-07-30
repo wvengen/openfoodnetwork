@@ -1,6 +1,6 @@
 module AddToCartHelper
   def product_out_of_stock
-    !@product.has_stock? && !Spree::Config[:allow_backorders]
+    @product.total_on_hand <= 0
   end
 
   def distributor_available_for?(order, product)
