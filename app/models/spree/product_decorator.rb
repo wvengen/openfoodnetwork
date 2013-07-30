@@ -58,6 +58,7 @@ Spree::Product.class_eval do
                                                 where('exchanges.sender_id = order_cycles.coordinator_id').
                                                 where('order_cycles.id = ?', order_cycle) }
 
+  # scope :has_products_on_hand
 
 
 

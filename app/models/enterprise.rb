@@ -59,7 +59,7 @@ class Enterprise < ActiveRecord::Base
   end
 
   def has_supplied_products_on_hand?
-    self.supplied_products.where('count_on_hand > 0').present?
+    #self.supplied_products.where('count_on_hand > 0').present? #TEMP ignore count_on_hand
   end
 
   def to_param
