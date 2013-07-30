@@ -1,3 +1,5 @@
+# NOTE: for spree 2 spike removed count_on_hand from scopes: 
+#   with_supplied_active_products_on_hand, with_distributed_active_products_on_hand, active_distributors
 class Enterprise < ActiveRecord::Base
   has_many :supplied_products, :class_name => 'Spree::Product', :foreign_key => 'supplier_id'
   has_many :distributed_orders, :class_name => 'Spree::Order', :foreign_key => 'distributor_id'
@@ -19,12 +21,12 @@ class Enterprise < ActiveRecord::Base
   scope :is_distributor, where(:is_distributor => true)
   scope :with_supplied_active_products_on_hand, lambda {
     joins(:supplied_products)
-      .where('spree_products.deleted_at IS NULL AND spree_products.available_on <= ? AND spree_products.count_on_hand > 0', Time.now)
+      .where('spree_products.deleted_at IS NULL AND spree_products.available_on <= ?', Time.now) # AND spree_products.count_on_hand > 0
       .uniq
   }
   scope :with_distributed_active_products_on_hand, lambda {
     joins(:distributed_products)
-      .where('spree_products.deleted_at IS NULL AND spree_products.available_on <= ? AND spree_products.count_on_hand > 0', Time.now)
+      .where('spree_products.deleted_at IS NULL AND spree_products.available_on <= ?', Time.now) # AND spree_products.count_on_hand > 0
       .uniq
   }
 
@@ -41,7 +43,7 @@ class Enterprise < ActiveRecord::Base
 
   scope :active_distributors, lambda {
     with_distributed_products_outer.with_order_cycles_outer.
-    where('(product_distributions.product_id IS NOT NULL AND spree_products.deleted_at IS NULL AND spree_products.available_on <= ? AND spree_products.count_on_hand > 0) OR (order_cycles.id IS NOT NULL AND order_cycles.orders_open_at <= ? AND order_cycles.orders_close_at >= ?)', Time.now, Time.now, Time.now).
+    where('(product_distributions.product_id IS NOT NULL AND spree_products.deleted_at IS NULL AND spree_products.available_on <= ?) OR (order_cycles.id IS NOT NULL AND order_cycles.orders_open_at <= ? AND order_cycles.orders_close_at >= ?)', Time.now, Time.now, Time.now). #  AND spree_products.count_on_hand > 0
     select('DISTINCT enterprises.*')
   }
   scope :distributing_product, lambda { |product|
