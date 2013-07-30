@@ -4,17 +4,17 @@ ruby "1.9.3"
 gem 'rails', '3.2.14'
 
 gem 'pg'
-gem 'spree', :git => 'git://github.com/spree/spree.git', :tag => 'v2.0.3'
-gem 'spree_i18n', :git => 'git://github.com/spree/spree_i18n.git', :branch => '2-0-stable'
-gem 'spree_paypal_express', :git => 'git://github.com/spree/spree_paypal_express.git', :branch => '2-0-stable'
-gem 'spree_last_address', :git => 'git://github.com/eaterprises/spree-last-address.git', :tag => 'spree-2.0'
-gem 'spree_auth_devise', :git => 'https://github.com/spree/spree_auth_devise.git', :branch => '2-0-stable'
+gem 'spree', :github => 'spree/spree', :branch => '2-0-stable' # TODO: lock on to next version (2.0.4)
+gem 'spree_i18n', :github => 'spree/spree_i18n', :branch => '2-0-stable'
+gem 'spree_paypal_express', :github => 'spree/spree_paypal_express', :branch => '2-0-stable'
+gem 'spree_last_address', :github => 'eaterprises/spree-last-address', :tag => 'spree-2.0'
+gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => '2-0-stable'
 
 gem 'comfortable_mexican_sofa'
 
 # Fix bug in simple_form preventing collection_check_boxes usage within form_for block
 # When merged, revert to upstream gem
-gem 'simple_form', :git => 'git://github.com/RohanM/simple_form.git'
+gem 'simple_form', :github => 'RohanM/simple_form'
 
 gem 'unicorn'
 gem 'bugsnag'
