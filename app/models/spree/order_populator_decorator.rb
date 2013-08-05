@@ -25,21 +25,28 @@ Spree::OrderPopulator.class_eval do
   end
   alias_method_chain :populate, :distribution_validation
 
-
-  # Copied from Spree::OrderPopulator, with additional validations added
+  # Copied from [2-0-stable]Spree::OrderPopulator, with additional validations added
   def attempt_cart_add(variant_id, quantity)
     quantity = quantity.to_i
+    # 2,147,483,647 is crazy.
+    # See issue #2695.
+    if quantity > 2_147_483_647
+      errors.add(:base, Spree.t(:please_enter_reasonable_quantity, :scope => :order_populator))
+      return false
+    end
+
     variant = Spree::Variant.find(variant_id)
     if quantity > 0
-      if check_stock_levels(variant, quantity) &&
-          check_distribution_provided_for(variant) &&
-          check_variant_available_under_distribution(variant)
+      line_item = @order.contents.add(variant, quantity, currency)
+      unless line_item.valid? && 
+          !check_distribution_provided_for(variant) &&
+          !check_variant_available_under_distribution(variant)
 
-        @order.add_variant(variant, quantity, currency)
+        errors.add(:base, line_item.errors.messages.values.join(" "))
+        return false
       end
     end
   end
-
 
   private
 
@@ -69,6 +76,7 @@ Spree::OrderPopulator.class_eval do
     DistributionChangeValidator.new(@order).can_change_to_distribution?(distributor, order_cycle)
   end
 
+  # 
   def check_distribution_provided_for(variant)
     distribution_provided = distribution_provided_for variant
 
