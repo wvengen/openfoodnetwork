@@ -1,5 +1,5 @@
 /**
- * Update the price on the product details page in real time when the variant or the quantity are changed.
+ * Update the price on the product details page in real time when the variant, quantity or distributor are changed.
  **/
 
 $(document).ready(function() {
@@ -37,7 +37,7 @@ function products_update_price_without_variant() {
   if(master_price == null) {
     // Store off the master price
     master_price = $("#product-price span.price").html();
-    master_price = master_price.substring(1);
+    master_price = $.trim(master_price).substring(1); //Assumes exactly one character for currency indicator
     $("#product-price span.price").data('master-price', master_price);
   }
 
