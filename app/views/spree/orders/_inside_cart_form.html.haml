@@ -6,7 +6,7 @@
     %h5
       Item total
       \:
-      %span.order-total.item-total= number_to_currency @order.item_total
+      %span.order-total.item-total= Spree::Money.new(@order.item_total)
     %h5
       Shipping total
       \:
