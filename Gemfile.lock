@@ -33,31 +33,31 @@ GIT
 
 GIT
   remote: git://github.com/spree/spree.git
-  revision: fcb4293046208a05dd9b281b1d767d588550b904
-  branch: 2-0-stable
+  revision: eabfb1f75ae2129fc143527b280309a1b9fba221
+  tag: v2.0.4
   specs:
-    spree (2.0.3)
-      spree_api (= 2.0.3)
-      spree_backend (= 2.0.3)
-      spree_cmd (= 2.0.3)
-      spree_core (= 2.0.3)
-      spree_frontend (= 2.0.3)
-      spree_sample (= 2.0.3)
-    spree_api (2.0.3)
+    spree (2.0.4)
+      spree_api (= 2.0.4)
+      spree_backend (= 2.0.4)
+      spree_cmd (= 2.0.4)
+      spree_core (= 2.0.4)
+      spree_frontend (= 2.0.4)
+      spree_sample (= 2.0.4)
+    spree_api (2.0.4)
       rabl (= 0.8.4)
-      spree_core (= 2.0.3)
+      spree_core (= 2.0.4)
       versioncake (= 1.0.0)
-    spree_backend (2.0.3)
+    spree_backend (2.0.4)
       deface (>= 0.9.0)
       jquery-rails (~> 3.0.0)
       jquery-ui-rails (~> 4.0.0)
       rails (~> 3.2.8)
-      select2-rails (= 3.2.1)
-      spree_api (= 2.0.3)
-      spree_core (= 2.0.3)
-    spree_cmd (2.0.3)
+      select2-rails (~> 3.4.7)
+      spree_api (= 2.0.4)
+      spree_core (= 2.0.4)
+    spree_cmd (2.0.4)
       thor (>= 0.14.6)
-    spree_core (2.0.3)
+    spree_core (2.0.4)
       activemerchant (~> 1.34)
       acts_as_list (= 0.2.0)
       awesome_nested_set (= 2.1.5)
@@ -77,17 +77,16 @@ GIT
       state_machine (= 1.2.0)
       stringex (~> 1.5.1)
       truncate_html (= 0.9.2)
-    spree_frontend (2.0.3)
+    spree_frontend (2.0.4)
       canonical-rails
       deface (>= 0.9.0)
       jquery-rails (~> 3.0.0)
       rails (~> 3.2.13)
-      select2-rails (= 3.2.1)
-      spree_api (= 2.0.3)
-      spree_core (= 2.0.3)
+      spree_api (= 2.0.4)
+      spree_core (= 2.0.4)
       stringex (~> 1.5.1)
-    spree_sample (2.0.3)
-      spree_core (= 2.0.3)
+    spree_sample (2.0.4)
+      spree_core (= 2.0.4)
 
 GIT
   remote: git://github.com/spree/spree_auth_devise.git
@@ -442,7 +441,8 @@ GEM
       railties (~> 3.2.0)
       sass (>= 3.1.10)
       tilt (~> 1.3)
-    select2-rails (3.2.1)
+    select2-rails (3.4.7)
+      sass-rails
       thor (~> 0.14)
     shoulda-matchers (2.2.0)
       activesupport (>= 3.0.0)

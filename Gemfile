@@ -4,7 +4,7 @@ ruby "1.9.3"
 gem 'rails', '3.2.14'
 
 gem 'pg'
-gem 'spree', :github => 'spree/spree', :branch => '2-0-stable' # TODO: lock on to next version (2.0.4)
+gem 'spree', :github => 'spree/spree', :tag => 'v2.0.4'
 gem 'spree_i18n', :github => 'spree/spree_i18n', :branch => '2-0-stable'
 gem 'spree_paypal_express', :github => 'spree/spree_paypal_express', :branch => '2-0-stable'
 gem 'spree_last_address', :github => 'eaterprises/spree-last-address', :tag => 'spree-2.0'
