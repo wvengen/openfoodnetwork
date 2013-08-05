@@ -62,7 +62,7 @@ Spree::Order.class_eval do
 
   # On creation of the order (when the first item is added to the user's cart), set the
   # shipping method to the first one available and create a shipment.
-  # order.create_shipment! creates an adjustment for the shipping cost on the order,
+  # order.shipments.create! creates an adjustment for the shipping cost on the order,
   # which means that the customer can see their shipping cost at every step of the
   # checkout process, not just after the delivery step.
   # This is based on the assumption that there's only one shipping method visible to the user,
