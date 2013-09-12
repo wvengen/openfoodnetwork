@@ -16,7 +16,7 @@ GIT
 
 GIT
   remote: git://github.com/eaterprises/spree-last-address.git
-  revision: 39653f38429546f6367e376e823d2b5482d1cd8d
+  revision: f93ea5a6b06e4605ea9c3fc5ef8e71f8e6aa0ffc
   branch: 1-3-stable
   specs:
     spree_last_address (1.1.0)
@@ -24,7 +24,7 @@ GIT
 
 GIT
   remote: git://github.com/eaterprises/spree.git
-  revision: 1c133672652e1ee8b6c8d694efe258e62378062e
+  revision: 4fa1f51ba70519bfd3be0975e5b71f2ea73bbbd6
   branch: 1-3-stable
   specs:
     spree (1.3.3)
@@ -148,14 +148,14 @@ GEM
     active_utils (2.0.0)
       activesupport (>= 2.3.11)
       i18n
-    activemerchant (1.38.0)
-      active_utils (~> 2.0)
-      activesupport (>= 2.3.14, < 5.0.0)
-      builder (>= 2.1.2, < 4.0.0)
-      i18n (~> 0.5)
-      json (~> 1.7)
-      money (< 6.0.0)
-      nokogiri (~> 1.4)
+    activemerchant (1.34.0)
+      active_utils (>= 1.0.2)
+      activesupport (>= 2.3.14)
+      builder (>= 2.0.0)
+      i18n
+      json (>= 1.5.1)
+      money
+      nokogiri
     activemodel (3.2.14)
       activesupport (= 3.2.14)
       builder (~> 3.0.0)
@@ -281,7 +281,7 @@ GEM
     httparty (0.11.0)
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
-    i18n (0.6.5)
+    i18n (0.6.4)
     journey (1.0.4)
     jquery-rails (2.2.2)
       railties (>= 3.0, < 5.0)
@@ -304,7 +304,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     method_source (0.8.1)
-    mime-types (1.24)
+    mime-types (1.23)
     mini_portile (0.5.1)
     money (5.0.0)
       i18n (~> 0.4)
@@ -431,7 +431,7 @@ GEM
     thor (0.18.1)
     tilt (1.4.1)
     timecop (0.6.2.2)
-    treetop (1.4.15)
+    treetop (1.4.14)
       polyglot
       polyglot (>= 0.3.1)
     truncate_html (0.5.5)
