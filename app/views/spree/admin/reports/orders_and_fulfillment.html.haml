@@ -24,6 +24,10 @@
   = select_tag(:report_type, options_for_select(@report_types, @report_type))
   %br
   %br
+  = label_tag nil, "Columns: "
+  = select_tag(:columns, options_for_select(@header, params[:columns]), multiple: true, class: "select2 fullwidth")
+  %br
+  %br
   = check_box_tag :csv
   = label_tag :csv, "Download as csv"
   %br
@@ -33,7 +37,7 @@
 %table#listing_orders.index
   %thead
     %tr{'data-hook' => "orders_header"}
-      - @header.each do |heading|
+      - @header_show.each do |heading|
         %th=heading
   %tbody
     - @table.each do |row|

@@ -549,13 +549,22 @@ Spree::Admin::ReportsController.class_eval do
 
     end
 
-    order_grouper = OpenFoodWeb::OrderGrouper.new rules, columns
+    params[:columns] = header if params[:columns].blank?
+
+    # Show only selected columns (probably can refactdr a bit cleaner?)
+    @header_show = params[:columns]
+    cols = []
+    header.each_with_index { |val, i| cols << i if params[:columns].include? val } 
+    columns_show = []
+    header.each_with_index { |val, i| columns_show << columns[i] if  cols.include? i }
+
+    order_grouper = OpenFoodWeb::OrderGrouper.new rules, columns_show
 
     @header = header
     @table = order_grouper.table(table_items)
     csv_file_name = "#{__method__}.csv"
 
-    render_report(@header, @table, params[:csv], csv_file_name)
+    render_report(@header_show, @table, params[:csv], csv_file_name)
 
   end
 
