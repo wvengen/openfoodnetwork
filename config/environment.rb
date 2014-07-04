@@ -7,4 +7,4 @@ Openfoodnetwork::Application.initialize!
 ActiveRecord::Base.include_root_in_json = true
 
 # Override disable_referential_integrity
-# require 'support/active_record_fk_hack'
+require 'active_record_fk_hack'

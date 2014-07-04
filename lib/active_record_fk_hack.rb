@@ -1,15 +1,14 @@
 # Defers constraint checking instead of disabling.
 #
 # This tries to solve issue
-# https://github.com/openfoodfoundation/openfoodnetwork/issues/245
+# https://github.com/openfoodfoundation/openfoodnetwork/issues/245.
 #
-# Using fixtures don't need the database role to be superuser anymore.
-# But this hack doesn't work with spree's fixture code.
-# : DELETE FROM "spree_countries"
-# => update or delete on table "spree_countries" violates foreign key
-#    constraint "spree_states_country_id_fk" on table "spree_states"
+# This version of disable_referential_integrity don't need the database role
+# to be a superuser anymore. But it requires all foreign keys to be declared
+# as deferrable.
 #
-# See http://kopongo.com/2008/7/25/postgres-ri_constrainttrigger-error
+# The idea and code comes from:
+# http://kopongo.com/2008/7/25/postgres-ri_constrainttrigger-error
 module ActiveRecord
   module ConnectionAdapters
     class PostgreSQLAdapter < AbstractAdapter
@@ -26,3 +25,4 @@ module ActiveRecord
     end
   end
 end
+$stderr.puts 'checking constraints deferred'
