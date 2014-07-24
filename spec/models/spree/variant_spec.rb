@@ -28,6 +28,45 @@ module Spree
           Variant.where(is_master: false).in_stock.sort.should == [@v_in_stock, @v_on_demand].sort
         end
       end
+
+      describe "finding variants in a distributor" do
+        let!(:d1) { create(:distributor_enterprise) }
+        let!(:d2) { create(:distributor_enterprise) }
+        let!(:p1) { create(:simple_product) }
+        let!(:p2) { create(:simple_product) }
+        let!(:oc1) { create(:simple_order_cycle, distributors: [d1], variants: [p1.master]) }
+        let!(:oc2) { create(:simple_order_cycle, distributors: [d2], variants: [p2.master]) }
+
+        it "shows variants in an order cycle distribution" do
+          Variant.in_distributor(d1).should == [p1.master]
+        end
+
+        it "doesn't show duplicates" do
+          oc_dup = create(:simple_order_cycle, distributors: [d1], variants: [p1.master])
+          Variant.in_distributor(d1).should == [p1.master]
+        end
+      end
+
+      describe "finding variants in an order cycle" do
+        let!(:d1) { create(:distributor_enterprise) }
+        let!(:d2) { create(:distributor_enterprise) }
+        let!(:p1) { create(:product) }
+        let!(:p2) { create(:product) }
+        let!(:oc1) { create(:simple_order_cycle, distributors: [d1], variants: [p1.master]) }
+        let!(:oc2) { create(:simple_order_cycle, distributors: [d2], variants: [p2.master]) }
+
+        it "shows variants in an order cycle" do
+          Variant.in_order_cycle(oc1).should == [p1.master]
+        end
+
+        it "doesn't show duplicates" do
+          ex = create(:exchange, order_cycle: oc1, sender: oc1.coordinator, receiver: d2)
+          ex.variants << p1.master
+
+          Variant.in_order_cycle(oc1).should == [p1.master]
+        end
+      end
+
     end
 
     describe "calculating the price with enterprise fees" do
@@ -133,6 +172,8 @@ module Spree
         it "returns product name if display_name is empty" do
           v = create(:variant, product: create(:product))
           v.name_to_display.should == v.product.name
+          v1 = create(:variant, display_name: "", product: create(:product))
+          v1.name_to_display.should == v1.product.name
         end
       end
 
@@ -142,10 +183,13 @@ module Spree
           v.unit_to_display.should == "foo"
         end
 
-        it "returns options_text if display_as is empty" do
+        it "returns options_text if display_as is blank" do
           v = create(:variant)
+          v1 = create(:variant, display_as: "")
           v.stub(:options_text).and_return "ponies"
+          v1.stub(:options_text).and_return "ponies"
           v.unit_to_display.should == "ponies"
+          v1.unit_to_display.should == "ponies"
         end
       end
 

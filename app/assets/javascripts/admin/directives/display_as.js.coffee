@@ -1,4 +1,4 @@
-angular.module("ofn.admin").directive "ofnDisplayAs", (optionValueNamer) ->
+angular.module("ofn.admin").directive "ofnDisplayAs", (OptionValueNamer) ->
   link: (scope, element, attrs) ->
 
     scope.$watchCollection ->
@@ -17,8 +17,8 @@ angular.module("ofn.admin").directive "ofnDisplayAs", (optionValueNamer) ->
           variant_unit_scale: variant_unit_scale
           variant_unit: variant_unit
           variant_unit_name: scope.product.variant_unit_name
-      
-      scope.placeholder_text = new optionValueNamer(variant_object).name()
+
+      scope.placeholder_text = new OptionValueNamer(variant_object).name()
 
     productUnitProperties = ->
       # get relevant product properties

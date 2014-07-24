@@ -14,22 +14,36 @@ class Enterprise < ActiveRecord::Base
   has_many :enterprise_roles, :dependent => :destroy
   has_many :users, through: :enterprise_roles
   has_and_belongs_to_many :payment_methods, join_table: 'distributors_payment_methods', class_name: 'Spree::PaymentMethod', foreign_key: 'distributor_id'
-  has_and_belongs_to_many :shipping_methods, join_table: 'distributors_shipping_methods', class_name: 'Spree::ShippingMethod', foreign_key: 'distributor_id'
-
+  has_many :distributor_shipping_methods, foreign_key: :distributor_id
+  has_many :shipping_methods, through: :distributor_shipping_methods
 
   delegate :latitude, :longitude, :city, :state_name, :to => :address
 
   accepts_nested_attributes_for :address
   accepts_nested_attributes_for :producer_properties, allow_destroy: true, reject_if: lambda { |pp| pp[:property_name].blank? }
 
-  has_attached_file :logo, :styles => { :medium => "300x300>", small: "180x180>", :thumb => "100x100>" }
-  has_attached_file :promo_image, :styles => { :large => "1200x260#", :thumb => "100x100>" }
+  has_attached_file :logo,
+    styles: { medium: "300x300>", small: "180x180>", thumb: "100x100>" },
+    url:  '/images/enterprises/logos/:id/:style/:basename.:extension',
+    path: 'public/images/enterprises/logos/:id/:style/:basename.:extension'
+
+  has_attached_file :promo_image,
+    styles: { large: "1200x260#", thumb: "100x100>" },
+    url:  '/images/enterprises/promo_images/:id/:style/:basename.:extension',
+    path: 'public/images/enterprises/promo_images/:id/:style/:basename.:extension'
+
+  validates_attachment_content_type :logo, :content_type => /\Aimage\/.*\Z/
+  validates_attachment_content_type :promo_image, :content_type => /\Aimage\/.*\Z/
+
+  include Spree::Core::S3Support
+  supports_s3 :logo
+  supports_s3 :promo_image
+
 
   validates_presence_of :name
   validates_presence_of :address
   validates_associated :address
 
-  after_initialize :initialize_country
   before_validation :set_unused_address_fields
   after_validation :geocode_address
 
@@ -159,18 +173,20 @@ class Enterprise < ActiveRecord::Base
     self.relatives.is_distributor
   end
 
+  def suppliers
+    self.relatives.is_primary_producer
+  end
+
   def website
     strip_url read_attribute(:website)
   end
+
   def facebook
     strip_url read_attribute(:facebook)
   end
+
   def linkedin
     strip_url read_attribute(:linkedin)
-  end
-
-  def suppliers
-    self.relatives.is_primary_producer
   end
 
   def distributed_variants
@@ -192,6 +208,7 @@ class Enterprise < ActiveRecord::Base
       where('spree_products.id IN (?)', Spree::Product.in_distributor(self)).
       select('DISTINCT spree_taxons.*')
   end
+
   # Return all taxons for all supplied products
   def supplied_taxons
     Spree::Taxon.
@@ -200,15 +217,11 @@ class Enterprise < ActiveRecord::Base
       select('DISTINCT spree_taxons.*')
   end
 
+
   private
 
   def strip_url(url)
     url.andand.sub /(https?:\/\/)?(www\.)?/, ''
-  end
-
-  def initialize_country
-    self.address ||= Spree::Address.new
-    self.address.country = Spree::Country.find_by_id(Spree::Config[:default_country_id]) if self.address.new_record?
   end
 
   def set_unused_address_fields

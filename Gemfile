@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby "1.9.3"
 
-gem 'rails', '3.2.17'
+gem 'rails', '3.2.19'
 
 gem 'pg'
 gem 'spree', :github => 'openfoodfoundation/spree', :branch => '1-3-stable'
@@ -32,6 +32,7 @@ gem "active_model_serializers"
 gem 'oj'
 gem 'deface', :github => 'spree/deface', :ref => '1110a13'
 gem 'paperclip'
+gem 'dalli'
 gem 'geocoder'
 gem 'gmaps4rails'
 gem 'spinjs-rails'
