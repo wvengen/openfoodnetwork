@@ -29,10 +29,9 @@ describe Enterprise do
         end
 
         it "sends a welcome email" do
-          mail_message = double "Mail::Message"
-          expect(EnterpriseMailer).to receive(:welcome).and_return mail_message
-          mail_message.should_receive :deliver
-          create(:enterprise, owner: user, email: enterprise.email, confirmed_at: nil)
+          expect do
+            create(:enterprise, owner: user, email: enterprise.email, confirmed_at: nil)
+          end.to enqueue_job WelcomeEnterpriseJob
         end
       end
     end
@@ -65,10 +64,9 @@ describe Enterprise do
           unconfirmed_enterprise.unconfirmed_email = nil
           unconfirmed_enterprise.save!
 
-          mail_message = double "Mail::Message"
-          expect(EnterpriseMailer).to receive(:welcome).and_return mail_message
-          mail_message.should_receive :deliver
-          unconfirmed_enterprise.confirm!
+          expect do
+            unconfirmed_enterprise.confirm!
+          end.to enqueue_job WelcomeEnterpriseJob, enterprise_id: unconfirmed_enterprise.id
         end
       end
 
@@ -606,11 +604,11 @@ describe Enterprise do
           hub2
         end
 
-        it "creates links from the new producer to all hubs owned by the same user, granting all permissions" do
+        it "creates links from the new producer to all hubs owned by the same user, granting add_to_order_cycle and create_variant_overrides permissions" do
           producer1
 
-          should_have_enterprise_relationship from: producer1, to: hub1, with: :all_permissions
-          should_have_enterprise_relationship from: producer1, to: hub2, with: :all_permissions
+          should_have_enterprise_relationship from: producer1, to: hub1, with: [:add_to_order_cycle, :create_variant_overrides]
+          should_have_enterprise_relationship from: producer1, to: hub2, with: [:add_to_order_cycle, :create_variant_overrides]
         end
 
         it "does not create any other links" do
@@ -622,24 +620,24 @@ describe Enterprise do
 
 
       describe "when a new hub is created" do
-        it "it creates links to the hub, from all producers owned by the same user, granting all permissions" do
+        it "it creates links to the hub, from all producers owned by the same user, granting add_to_order_cycle and create_variant_overrides permissions" do
           producer1
           producer2
           hub1
 
-          should_have_enterprise_relationship from: producer1, to: hub1, with: :all_permissions
-          should_have_enterprise_relationship from: producer2, to: hub1, with: :all_permissions
+          should_have_enterprise_relationship from: producer1, to: hub1, with: [:add_to_order_cycle, :create_variant_overrides]
+          should_have_enterprise_relationship from: producer2, to: hub1, with: [:add_to_order_cycle, :create_variant_overrides]
         end
 
 
-        it "creates links from the new hub to all hubs owned by the same user, granting all permissions" do
+        it "creates links from the new hub to all hubs owned by the same user, granting add_to_order_cycle permission" do
           hub1
           hub2
           hub3
 
-          should_have_enterprise_relationship from: hub2, to: hub1, with: :all_permissions
-          should_have_enterprise_relationship from: hub3, to: hub1, with: :all_permissions
-          should_have_enterprise_relationship from: hub3, to: hub2, with: :all_permissions
+          should_have_enterprise_relationship from: hub2, to: hub1, with: [:add_to_order_cycle]
+          should_have_enterprise_relationship from: hub3, to: hub1, with: [:add_to_order_cycle]
+          should_have_enterprise_relationship from: hub3, to: hub2, with: [:add_to_order_cycle]
         end
 
         it "does not create any other links" do
@@ -657,6 +655,8 @@ describe Enterprise do
         er.should_not be_nil
         if opts[:with] == :all_permissions
           er.permissions.map(&:name).sort.should == ['add_to_order_cycle', 'manage_products', 'edit_profile', 'create_variant_overrides'].sort
+        elsif opts.key? :with
+          er.permissions.map(&:name).sort.should == opts[:with].map(&:to_s).sort
         end
       end
     end

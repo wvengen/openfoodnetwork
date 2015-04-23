@@ -77,7 +77,7 @@ class Enterprise < ActiveRecord::Base
   after_rollback :restore_permalink
 
   scope :by_name, order('name')
-  scope :visible, where(:visible => true)
+  scope :visible, where(visible: true)
   scope :confirmed, where('confirmed_at IS NOT NULL')
   scope :unconfirmed, where('confirmed_at IS NULL')
   scope :activated, where("confirmed_at IS NOT NULL AND sells != 'unspecified'")
@@ -320,6 +320,11 @@ class Enterprise < ActiveRecord::Base
     end
   end
 
+  # Based on a devise method, but without adding errors
+  def pending_any_confirmation?
+    !confirmed? || pending_reconfirmation?
+  end
+
   protected
 
   def devise_mailer
@@ -348,7 +353,7 @@ class Enterprise < ActiveRecord::Base
   end
 
   def send_welcome_email
-    EnterpriseMailer.welcome(self).deliver
+    Delayed::Job.enqueue WelcomeEnterpriseJob.new(self.id)
   end
 
   def strip_url(url)
@@ -382,13 +387,12 @@ class Enterprise < ActiveRecord::Base
     enterprises = owner.owned_enterprises.where('enterprises.id != ?', self)
 
     # We grant permissions to all pre-existing hubs
+    hub_permissions = [:add_to_order_cycle]
+    hub_permissions << :create_variant_overrides if is_primary_producer
     enterprises.is_hub.each do |enterprise|
       EnterpriseRelationship.create!(parent: self,
                                      child: enterprise,
-                                     permissions_list: [:add_to_order_cycle,
-                                                        :manage_products,
-                                                        :edit_profile,
-                                                        :create_variant_overrides])
+                                     permissions_list: hub_permissions)
     end
 
     # All pre-existing producers grant permission to new hubs
@@ -397,8 +401,6 @@ class Enterprise < ActiveRecord::Base
         EnterpriseRelationship.create!(parent: enterprise,
                                        child: self,
                                        permissions_list: [:add_to_order_cycle,
-                                                          :manage_products,
-                                                          :edit_profile,
                                                           :create_variant_overrides])
       end
     end

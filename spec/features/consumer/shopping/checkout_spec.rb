@@ -8,23 +8,21 @@ feature "As a consumer I want to check out my cart", js: true do
   include WebHelper
   include UIComponentHelper
 
-  let(:distributor) { create(:distributor_enterprise) }
+  let!(:zone) { create(:zone_with_member) }
+  let(:distributor) { create(:distributor_enterprise, charges_sales_tax: true) }
   let(:supplier) { create(:supplier_enterprise) }
   let!(:order_cycle) { create(:simple_order_cycle, suppliers: [supplier], distributors: [distributor], coordinator: create(:distributor_enterprise), variants: [product.master]) }
-  let(:enterprise_fee) { create(:enterprise_fee, amount: 1.23) }
-  let(:product) { create(:simple_product, supplier: supplier) }
+  let(:enterprise_fee) { create(:enterprise_fee, amount: 1.23, tax_category: product.tax_category) }
+  let(:product) { create(:taxed_product, supplier: supplier, price: 10, zone: zone, tax_rate_amount: 0.1) }
   let(:order) { create(:order, order_cycle: order_cycle, distributor: distributor) }
 
   before do
-    ActionMailer::Base.deliveries.clear
+    Spree::Config.shipment_inc_vat = true
+    Spree::Config.shipping_tax_rate = 0.25
+
     add_enterprise_fee enterprise_fee
     set_order order
     add_product_to_cart
-  end
-
-  it "shows the current distributor on checkout" do
-    visit checkout_path
-    page.should have_content distributor.name
   end
 
   describe "with shipping and payment methods" do
@@ -51,6 +49,11 @@ feature "As a consumer I want to check out my cart", js: true do
         checkout_as_guest
       end
 
+      it "shows the current distributor" do
+        visit checkout_path
+        page.should have_content distributor.name
+      end
+
       it "shows a breakdown of the order price" do
         toggle_shipping
         choose sm2.name
@@ -58,6 +61,11 @@ feature "As a consumer I want to check out my cart", js: true do
         page.should have_selector 'orderdetails .cart-total', text: "$11.23"
         page.should have_selector 'orderdetails .shipping', text: "$4.56"
         page.should have_selector 'orderdetails .total', text: "$15.79"
+
+        # Tax should not be displayed in checkout, as the customer's choice of shipping method
+        # affects the tax and we haven't written code to live-update the tax amount when they
+        # make a change.
+        page.should_not have_content product.tax_category.name
       end
 
       it "shows all shipping methods, but doesn't show ship address when not needed" do
@@ -80,7 +88,6 @@ feature "As a consumer I want to check out my cart", js: true do
 
     context "on the checkout page with payments open" do
       before do
-        ActionMailer::Base.deliveries.clear
         visit checkout_path
         checkout_as_guest
         toggle_payment
@@ -112,23 +119,32 @@ feature "As a consumer I want to check out my cart", js: true do
           toggle_shipping
           within "#shipping" do
             choose sm2.name
-            fill_in 'Any notes or custom delivery instructions?', with: "SpEcIaL NoTeS"
+            fill_in 'Any comments or special instructions?', with: "SpEcIaL NoTeS"
           end
           toggle_payment
           within "#payment" do
             choose pm1.name
           end
 
+          expect do
+            place_order
+            page.should have_content "Your order has been processed successfully"
+          end.to enqueue_job ConfirmOrderJob
 
-          ActionMailer::Base.deliveries.length.should == 0
-          place_order
-          page.should have_content "Your order has been processed successfully"
-          ActionMailer::Base.deliveries.length.should == 2
-          email = ActionMailer::Base.deliveries.last
-          site_name = Spree::Config[:site_name]
-          email.subject.should include "#{site_name} Order Confirmation"
+          # And the order's special instructions should be set
           o = Spree::Order.complete.first
           expect(o.special_instructions).to eq "SpEcIaL NoTeS"
+
+          # And the Spree tax summary should not be displayed
+          page.should_not have_content product.tax_category.name
+
+          # And the total tax for the order, including shipping and fee tax, should be displayed
+          # product tax    ($10.00 @ 10% = $0.91)
+          # + fee tax      ($ 1.23 @ 10% = $0.11)
+          # + shipping tax ($ 4.56 @ 25% = $0.91)
+          #                              = $1.93
+          page.should have_content "(includes tax)"
+          page.should have_content "$1.93"
         end
 
         context "with basic details filled" do
@@ -214,7 +230,6 @@ feature "As a consumer I want to check out my cart", js: true do
 
     context "when the customer has a pre-set shipping and billing address" do
       before do
-        ActionMailer::Base.deliveries.clear
         # Load up the customer's order and give them a shipping and billing address
         # This is equivalent to when the customer has ordered before and their addresses
         # are pre-populated.
@@ -231,10 +246,10 @@ feature "As a consumer I want to check out my cart", js: true do
         toggle_payment
         choose pm1.name
 
-        expect(ActionMailer::Base.deliveries.length).to be 0
-        place_order
-        page.should have_content "Your order has been processed successfully"
-        expect(ActionMailer::Base.deliveries.length).to be 2
+        expect do
+          place_order
+          page.should have_content "Your order has been processed successfully"
+        end.to enqueue_job ConfirmOrderJob
       end
     end
   end

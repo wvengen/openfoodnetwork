@@ -15,6 +15,8 @@ gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => '1-3-s
 gem 'spree_paypal_express', :github => "openfoodfoundation/better_spree_paypal_express", :branch => "1-3-stable"
 #gem 'spree_paypal_express', :github => "spree-contrib/better_spree_paypal_express", :branch => "1-3-stable"
 
+gem 'delayed_job_active_record'
+gem 'daemons'
 gem 'comfortable_mexican_sofa'
 
 # Fix bug in simple_form preventing collection_check_boxes usage within form_for block
@@ -26,7 +28,7 @@ gem 'angularjs-rails', '1.2.13'
 gem 'bugsnag'
 gem 'newrelic_rpm'
 gem 'haml'
-gem 'sass', "~> 3.2"
+gem 'sass', "~> 3.3"
 gem 'sass-rails', '~> 3.2.3', groups: [:default, :assets]
 gem 'aws-sdk'
 gem 'db2fog'
