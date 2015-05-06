@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 source ./script/ci/includes.sh
 
 succeed_if_master_merged
