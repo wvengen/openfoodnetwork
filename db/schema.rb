@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150916061809) do
+ActiveRecord::Schema.define(:version => 20150924054538) do
 
   create_table "account_invoices", :force => true do |t|
     t.integer  "user_id",    :null => false
@@ -43,8 +43,8 @@ ActiveRecord::Schema.define(:version => 20150916061809) do
     t.datetime "begins_at"
     t.datetime "ends_at"
     t.string   "sells"
-    t.boolean  "trial",         :default => false
-    t.decimal  "turnover",      :default => 0.0
+    t.boolean  "trial",              :default => false
+    t.decimal  "turnover",           :default => 0.0
     t.datetime "deleted_at"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -634,6 +634,13 @@ ActiveRecord::Schema.define(:version => 20150916061809) do
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
   end
+
+  create_table "spree_option_values_line_items", :id => false, :force => true do |t|
+    t.integer "line_item_id"
+    t.integer "option_value_id"
+  end
+
+  add_index "spree_option_values_line_items", ["line_item_id"], :name => "index_option_values_line_items_on_line_item_id"
 
   create_table "spree_option_values_variants", :id => false, :force => true do |t|
     t.integer "variant_id"
