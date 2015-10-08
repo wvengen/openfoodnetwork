@@ -71,7 +71,7 @@ feature %q{
       it "displays a column for variant description, which shows only product name when options text is blank" do
         page.should have_selector "th.variant", text: "PRODUCT: UNIT", :visible => true
         page.should have_selector "td.variant", text: li1.product.name, :visible => true
-        page.should have_selector "td.variant", text: (li2.product.name + ": " + li2.variant.unit_text), :visible => true
+        page.should have_selector "td.variant", text: (li2.product.name + ": " + li2.variant.options_text), :visible => true
       end
 
       it "displays a field for quantity" do
@@ -593,7 +593,7 @@ feature %q{
       before :each do
         visit '/admin/orders/bulk_management'
         within "tr#li_#{li3.id}" do
-          find("a", text: li3.product.name + ": " + li3.variant.unit_text).click
+          find("a", text: li3.product.name + ": " + li3.variant.options_text).click
         end
       end
 
