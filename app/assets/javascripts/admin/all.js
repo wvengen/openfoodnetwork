@@ -28,6 +28,8 @@
 //= require ./enterprises/enterprises
 //= require ./enterprise_groups/enterprise_groups
 //= require ./index_utils/index_utils
+//= require ./line_items/line_items
+//= require ./orders/orders
 //= require ./payment_methods/payment_methods
 //= require ./products/products
 //= require ./shipping_methods/shipping_methods

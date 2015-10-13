@@ -1,4 +1,4 @@
-angular.module("ofn.admin").filter "variantFilter", ->
+angular.module("admin.lineItems").filter "variantFilter", ->
     return (lineItems,selectedUnitsProduct,selectedUnitsVariant,sharedResource) ->
       filtered = []
       filtered.push lineItem for lineItem in lineItems when (angular.equals(selectedUnitsProduct,{}) ||

@@ -1,4 +1,4 @@
-angular.module("ofn.admin").filter "selectFilter", (blankOption) ->
+angular.module("admin.lineItems").filter "selectFilter", (blankOption) ->
     return (lineItems,selectedSupplier,selectedDistributor,selectedOrderCycle) ->
       filtered = []
       filtered.push lineItem for lineItem in lineItems when (angular.equals(selectedSupplier,"0") || lineItem.supplier.id == selectedSupplier) &&

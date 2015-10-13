@@ -1,8 +1,11 @@
 class Api::Admin::LineItemSerializer < ActiveModel::Serializer
-  attributes :id, :quantity, :max_quantity, :supplier, :price, :final_weight_volume, :units_product, :units_variant
+  attributes :id, :quantity, :max_quantity, :price, :supplier, :final_weight_volume, :units_product, :units_variant
+
+  has_one :order, serializer: Api::Admin::IdSerializer
 
   def supplier
-    Api::Admin::IdNameSerializer.new(object.product.supplier).serializable_hash
+    # Need an object so that we can dereference
+    { id: object.product.supplier_id }
   end
 
   def units_product

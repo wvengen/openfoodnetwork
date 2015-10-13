@@ -11,12 +11,20 @@ module Admin
     before_filter :remove_unauthorized_bulk_attrs, only: [:bulk_update]
     around_filter :protect_invalid_destroy, only: :destroy
 
+    def index
+      respond_to do |format|
+        format.html
+        format.json do
+          render_as_json @collection, current_user: spree_current_user
+        end
+      end
+    end
 
     def show
       respond_to do |format|
         format.html
         format.json do
-          render json: Api::Admin::OrderCycleSerializer.new(@order_cycle, current_user: spree_current_user).to_json
+          render json: @order_cycle, serializer: Api::Admin::OrderCycleSerializer, current_user: spree_current_user
         end
       end
     end
@@ -25,7 +33,7 @@ module Admin
       respond_to do |format|
         format.html
         format.json do
-          render json: Api::Admin::OrderCycleSerializer.new(@order_cycle, current_user: spree_current_user).to_json
+          render json: @order_cycle, serializer: Api::Admin::OrderCycleSerializer, current_user: spree_current_user
         end
       end
     end
@@ -81,19 +89,32 @@ module Admin
 
 
     protected
-    def collection(show_more=false)
-      ocs = OrderCycle.accessible_by(spree_current_user)
+    def collection
+      ocs = if params[:as] == "distributor"
+        OrderCycle.ransack(params[:q]).result.
+        involving_managed_distributors_of(spree_current_user).order('updated_at DESC')
+      elsif params[:as] == "producer"
+        OrderCycle.ransack(params[:q]).result.
+        involving_managed_producers_of(spree_current_user).order('updated_at DESC')
+      else
+        OrderCycle.ransack(params[:q]).result.accessible_by(spree_current_user)
+      end
 
       ocs.undated +
         ocs.soonest_closing +
         ocs.soonest_opening +
-        (show_more ? ocs.closed : ocs.recently_closed)
+        ocs.closed
+    end
+
+    def collection_actions
+      [:index, :for_orders]
     end
 
     private
     def load_data_for_index
-      @show_more = !!params[:show_more]
-      @order_cycle_set = OrderCycleSet.new :collection => collection(@show_more)
+      params[:q] ||= {}
+      params[:q][:orders_close_at_gt] = 31.days.ago unless !!params[:show_more] || params[:q][:orders_close_at_gt].present?
+      @order_cycle_set = OrderCycleSet.new :collection => collection
     end
 
     def require_coordinator

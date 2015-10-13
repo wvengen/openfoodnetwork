@@ -18,19 +18,19 @@ angular.module("ofn.admin").controller "AdminOrderMgmtCtrl", [
       $scope.selectedUnitsVariant = {};
       $scope.sharedResource = false
       $scope.columns = Columns.setColumns
-        order_no:     { name: "Order No.",    visible: false }
-        full_name:    { name: "Name",         visible: true }
-        email:        { name: "Email",        visible: false }
-        phone:        { name: "Phone",        visible: false }
-        order_date:   { name: "Order Date",   visible: true }
-        producer:     { name: "Producer",     visible: true }
-        order_cycle:  { name: "Order Cycle",  visible: false }
-        hub:          { name: "Hub",          visible: false }
-        variant:      { name: "Variant",      visible: true }
-        quantity:     { name: "Quantity",     visible: true }
-        max:          { name: "Max",          visible: true }
-        final_weight_volume:   { name: "Weight/Volume", visible: false }
-        price:        { name: "Price",        visible: false }
+        order_no:            { name: "Order No.",      visible: false }
+        full_name:           { name: "Name",           visible: true }
+        email:               { name: "Email",          visible: false }
+        phone:               { name: "Phone",          visible: false }
+        order_date:          { name: "Order Date",     visible: true }
+        producer:            { name: "Producer",       visible: true }
+        order_cycle:         { name: "Order Cycle",    visible: false }
+        hub:                 { name: "Hub",            visible: false }
+        variant:             { name: "Variant",        visible: true }
+        quantity:            { name: "Quantity",       visible: true }
+        max:                 { name: "Max",            visible: true }
+        final_weight_volume: { name: "Weight/Volume",  visible: false }
+        price:               { name: "Price",          visible: false }
     $scope.initialise = ->
       $scope.initialiseVariables()
       authorise_api_reponse = ""

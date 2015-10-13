@@ -6,31 +6,31 @@
 
 =admin_inject_spree_api_key
 
-%div{ ng: { app: 'ofn.admin', controller: 'AdminOrderMgmtCtrl', init: 'initialise()' } }
+%div{ ng: { app: 'admin.orders', controller: 'BulkOrdersCtrl', init: 'initialise()' } }
   %div{ 'ng-show' => '!spree_api_key_ok' }
     {{ api_error_msg }}
   .filters{ :class => "sixteen columns alpha" }
     .date_filter{ :class => "two columns alpha" }
       %label{ :for => 'start_date_filter' }Start Date
       %br
-      %input{ :class => "two columns alpha", :type => "text", :id => 'start_date_filter', 'ng-model' => 'startDate', 'datepicker' => "startDate", 'ofn-confirm-model-change' => "startDate" }
+      %input{ :class => "two columns alpha", :type => "text", :id => 'start_date_filter', 'ng-model' => 'startDate', 'datepicker' => "startDate", 'confirm-change' => "confirmRefresh()", 'ng-change' => 'refreshData()' }
     .date_filter{ :class => "two columns" }
       %label{ :for => 'end_date_filter' }End Date
       %br
-      %input{ :class => "two columns alpha", :type => "text", :id => 'end_date_filter', 'ng-model' => 'endDate', 'datepicker' => "endDate", 'ofn-confirm-model-change' => "endDate" }
+      %input{ :class => "two columns alpha", :type => "text", :id => 'end_date_filter', 'ng-model' => 'endDate', 'datepicker' => "endDate", 'confirm-change' => "confirmRefresh()", 'ng-change' => 'refreshData()' }
     .one.column &nbsp;
     .filter_select{ :class => "three columns" }
       %label{ :for => 'supplier_filter' }Producer
       %br
-      %select{ :class => "three columns alpha", :id => 'supplier_filter', 'ofn-select2-min-search' => 5, 'ng-model' => 'supplierFilter', 'ng-options' => 's.id as s.name for s in suppliers' }
+      %select{ :class => "three columns alpha", :id => 'supplier_filter', 'select2-min-search' => 5, 'ng-model' => 'supplierFilter', 'ng-options' => 's.id as s.name for s in suppliers' }
     .filter_select{ :class => "three columns" }
       %label{ :for => 'distributor_filter' }Hub
       %br
-      %select{ :class => "three columns alpha", :id => 'distributor_filter', 'ofn-select2-min-search' => 5, 'ng-model' => 'distributorFilter', 'ng-options' => 'd.id as d.name for d in distributors'}
+      %select{ :class => "three columns alpha", :id => 'distributor_filter', 'select2-min-search' => 5, 'ng-model' => 'distributorFilter', 'ng-options' => 'd.id as d.name for d in distributors'}
     .filter_select{ :class => "three columns" }
       %label{ :for => 'order_cycle_filter' }Order Cycle
       %br
-      %select{ :class => "three columns alpha", :id => 'order_cycle_filter', 'ofn-select2-min-search' => 5, 'ng-model' => 'orderCycleFilter', 'ng-options' => 'oc.id as oc.name for oc in orderCycles'}
+      %select{ :class => "three columns alpha", :id => 'order_cycle_filter', 'select2-min-search' => 5, 'ng-model' => 'orderCycleFilter', 'ng-options' => 'oc.id as oc.name for oc in orderCycles'}
     .filter_clear{ :class => "two columns omega" }
       %label{ :for => 'clear_all_filters' }
       %br
@@ -146,14 +146,14 @@
           %td.variant{ 'ng-show' => 'columns.variant.visible' }
             %a{ :href => '#', 'ng-click' => "setSelectedUnitsVariant(line_item.units_product,line_item.units_variant)" } {{ line_item.units_variant.full_name }}
           %td.quantity{ 'ng-show' => 'columns.quantity.visible' }
-            %input{ :type => 'number', :name => 'quantity', :id => 'quantity', ng: { model:  "line_item.quantity", change: "updateOnQuantity(line_item)", required: "true" }, min: 1, 'obj-for-update' => "line_item", "attr-for-update" => "quantity" }
+            %input{ :type => 'number', :name => 'quantity', :id => 'quantity', ng: { model:  "line_item.quantity", change: "updateOnQuantity(line_item)", required: "true" }, min: 1, step: 1 }
           %td.max{ 'ng-show' => 'columns.max.visible' } {{ line_item.max_quantity }}
           %td.final_weight_volume{ 'ng-show' => 'columns.final_weight_volume.visible' }
-            %input{ :type => 'number', :name => 'final_weight_volume', :id => 'final_weight_volume', ng: { model: "line_item.final_weight_volume", readonly: "unitValueLessThanZero(line_item)", change: "weightAdjustedPrice(line_item)", required: "true" }, min: 0, 'ng-pattern' => '/[1-9]+/', 'obj-for-update' => "line_item", "attr-for-update" => "final_weight_volume" }
+            %input{ :type => 'number', :name => 'final_weight_volume', :id => 'final_weight_volume', ng: { model: "line_item.final_weight_volume", readonly: "unitValueLessThanZero(line_item)", change: "weightAdjustedPrice(line_item)", required: "true" }, min: 0, 'ng-pattern' => '/[1-9]+/' }
           %td.price{ 'ng-show' => 'columns.price.visible' }
-            %input{ :type => 'text', :name => 'price', :id => 'price', :value => '{{ line_item.price * line_item.quantity | currency }}', 'ng-readonly' => "true", 'obj-for-update' => "line_item", "attr-for-update" => "price" }
+            %input{ :type => 'text', :name => 'price', :id => 'price', :value => '{{ line_item.price * line_item.quantity | currency }}', 'ng-readonly' => "true" }
           %td.actions
             %a{ :class => "edit-order icon-edit no-text", 'ofn-confirm-link-path' => "/admin/orders/{{line_item.order.number}}/edit" }
           %td.actions
             %a{ 'ng-click' => "deleteLineItem(line_item)", :class => "delete-line-item icon-trash no-text" }
-      %input{ :type => "button", 'value' => 'Update', 'ng-click' => 'submit()' }
+      %input{ :type => "button", 'ng-value' => "(saving ? 'Saving' : 'Save')", 'ng-click' => 'submit()' }

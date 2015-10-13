@@ -59,11 +59,30 @@ Spree::Admin::BaseController.class_eval do
     end
   end
 
+  def editable_orders
+    permissions = OpenFoodNetwork::Permissions.new(spree_current_user)
+    permissions.editable_orders.order(:id).ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+  end
+
   def html_request?
     request.format.html?
   end
 
   def json_request?
     request.format.json?
+  end
+
+  def render_as_json(data, options={})
+    if [Array, ActiveRecord::Relation].include? data.class
+      render options.merge(json: data, each_serializer: serializer)
+    else
+      render options.merge(json: data, serializer: serializer)
+    end
+  end
+
+  def serializer
+    suffix = params[:serializer].andand.classify || ""
+    name = controller_name.classify
+    ("Api::Admin::"+ suffix + name + "Serializer").constantize
   end
 end

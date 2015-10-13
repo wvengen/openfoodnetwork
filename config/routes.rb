@@ -68,6 +68,7 @@ Openfoodnetwork::Application.routes.draw do
     resources :enterprises do
       collection do
         get :for_order_cycle
+        get :for_line_items
         post :bulk_update, as: :bulk_update
       end
 
@@ -203,8 +204,8 @@ Spree::Core::Engine.routes.prepend do
       post :bulk_update, :on => :collection, :as => :bulk_update
     end
 
-    resources :orders do
-      get :managed, on: :collection
+    resources :line_items do
+      get :index, on: :collection, format: :json
     end
   end
 

@@ -16,21 +16,18 @@ Spree::Admin::OrdersController.class_eval do
   # instead of the update_distribution_charge method.
   after_filter :update_distribution_charge, :only => :update
 
+  respond_to :html, :json
+
   respond_override :index => { :html =>
     { :success => lambda {
       # Filter orders to only show those distributed by current user (or all for admin user)
-      @orders = @search.result.includes([:user, :shipments, :payments]).
+      @search.result.includes([:user, :shipments, :payments]).
         distributed_by_user(spree_current_user).
         page(params[:page]).
         per(params[:per_page] || Spree::Config[:orders_per_page])
-      # Filter orders by distributor
-      if params[:distributor_ids]
-        @orders = @orders.where(distributor_id: params[:distributor_ids])
-      end
-      if params[:order_cycle_ids]
-        @orders = @orders.where(order_cycle_id: params[:order_cycle_ids])
-      end
     } } }
+
+  respond_override index: { :json => { :success => lambda { render_as_json editable_orders } } }
 
   # Overwrite to use confirm_email_for_customer instead of confirm_email.
   # This uses a new template. See mailers/spree/order_mailer_decorator.rb.
@@ -43,11 +40,5 @@ Spree::Admin::OrdersController.class_eval do
 
   def update_distribution_charge
     @order.update_distribution_charge!
-  end
-
-  def managed
-    permissions = OpenFoodNetwork::Permissions.new(spree_current_user)
-    @orders = permissions.editable_orders.order(:id).ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
-    render json: @orders, each_serializer: Api::Admin::OrderSerializer
   end
 end
