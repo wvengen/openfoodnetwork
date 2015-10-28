@@ -1,5 +1,7 @@
 module Admin
   module InjectionHelper
+    include BusinessModelConfigurationHelper
+
     def admin_inject_enterprise
       admin_inject_json_ams "admin.enterprises", "enterprise", @enterprise, Api::Admin::EnterpriseSerializer
     end
@@ -72,6 +74,10 @@ module Admin
 
     def admin_inject_order_cycle_instance
       render partial: "admin/json/injection_ams", locals: {ngModule: 'admin.orderCycles', name: 'ocInstance', json: "{coordinator_id: '#{@order_cycle.coordinator.id}'}"}
+    end
+
+    def admin_inject_monthly_bill_description
+      render partial: "admin/json/injection_ams", locals: {ngModule: "admin.enterprises", name: "monthlyBillDescription", json: monthly_bill_description.to_json}
     end
 
     def admin_inject_spree_api_key
