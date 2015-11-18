@@ -31,6 +31,7 @@ en:
   per_month: "per month"
   free: "free"
   plus_tax: "plus GST"
+  total_monthly_bill_incl_tax: "Total Monthly Bill (Incl. Tax)"
 
   logo: "Logo (640x130)"
   logo_mobile: "Mobile logo (75x26)"
