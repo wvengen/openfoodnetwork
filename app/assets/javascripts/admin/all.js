@@ -38,6 +38,7 @@
 //= require ./taxons/taxons
 //= require ./utils/utils
 //= require ./users/users
+//= require ./variant_overrides/variant_overrides
 //= require textAngular.min.js
 //= require textAngular-sanitize.min.js
 //= require ../shared/bindonce.min.js
