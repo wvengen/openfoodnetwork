@@ -7,6 +7,8 @@
         = t :producers_about
       %img.right.show-for-medium-up{"bo-src" => "producer.logo" }
       %p.text-small{ "bo-text" => "producer.description"}
+      %p.text-small
+        %a{"bo-href-i" => "/producers/{{producer.id}}"}= t :producers_read_more
     %div.show-for-medium-up{"bo-if" => "producer.description.length==0"}
       %label &nbsp;
 

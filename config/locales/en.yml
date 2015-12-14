@@ -392,6 +392,7 @@ See the %{link} to find out more about %{sitename}'s features and to start using
   producers_filter_type: Type
   producers_title: Producers
   producers_headline: Find local producers
+  producers_read_more: Read more...
   producers_signup_title: Sign up as a producer
   producers_signup_headline: Food producers, empowered.
   producers_signup_motivation: Sell your food and tell your stories to diverse new markets. Save time and money on every overhead. We support innovation without the risk. We've levelled the playing field.
